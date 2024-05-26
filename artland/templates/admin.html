@@ -1,0 +1,305 @@
+{% extends "layout.html" %}
+{% block titulo %} ArtLand {% endblock %}
+{% block contenido %}
+<nav class="navbar navbar-expand-lg" style="background-color: #c9ece5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/usuarioa">
+      <img src="{{url_for('static', filename='img/pincel.png')}}" width="30" height="30" class="d-inline-block align-text-top">
+      ArtLand 
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+          Operaciones
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/sPubli">Publicaciones</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/sComen">Comentarios</a></li>
+        </ul>
+      </li>
+    </ul>
+    <ul class="navbar-nav">
+      <div class="btn-group dropstart">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle-right" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+            <img src="data:image/jpeg;base64,{{current_user.fotou}}" width="30" height="30" class="rounded-circle">
+            {{current_user.nombre}}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/perfila/{{current_user.id}}">Mi Perifl</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Cerrar Sesion</a></li>
+          </ul>
+        </li>
+      </div>  
+    </ul>
+  </div>
+</nav>
+<section class="container">
+  {% with mensajes = get_flashed_messages() %}
+    {% if mensajes %}
+      {% for msj in mensajes%}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {{ msj }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+<table class="table table-bordered table-hover caption-top">
+  <caption>Lista de Usuarios</caption>
+  <thead>
+    <tr>
+      <th scope="col">Id</th>
+      <th scope="col">Foto</th>
+      <th scope="col">Nombre</th>
+      <th scope="col">Correo</th>
+      <th scope="col">Fecha de Nacimiento</th>
+      <th scope="col">Fecha de Registro</th>
+      <th scope="col">Perfil</th>
+      <th scope="col">Operaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      {% for u in usuario %}
+      <th scope="row">{{ u.0 }}</th>
+      <td>
+        <div class="btn-group dropstart">
+          <img src="data:image/jpeg;base64,{{ u.7 }}" alt="avatar" class="rounded-circle" style="width: 50px; height: 50px;" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <ul class="dropdown-menu">
+              <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#vfoto{{u.0}}">Ver Foto</a></li>
+              <li><hr class="dropdown-divider"></li>
+              <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#foto{{u.0}}">Editar Foto</a></li>
+            </ul>
+        </div>
+      </td>
+      <td>{{ u.1 }}</td>
+      <td>{{ u.2 }}</td>
+      <td>{{ u.5 }}</td>
+      <td>{{ u.6 }}</td>
+      <td>{{ u.4 }}</td>
+      <td>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editar{{u.0}}">
+          <img src="{{url_for('static', filename='img/editar.png')}}" width="20" height="20">
+        </button>
+        <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#cClave{{u.0}}">
+          <img src="{{url_for('static', filename='img/clave.png')}}" width="20" height="20">
+        </button>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminar{{u.0}}">
+          <img src="{{url_for('static', filename='img/borrar.png')}}" width="20" height="20">
+        </button>
+      </td>
+    </tr>
+    <div class="modal fade" id="editar{{u.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/uUsuario/{{u.0}}">
+              <div class="row mb-3">
+                <label for="nombre" class="col-sm-2 col-form-label">Usuario</label>
+                <div class="col-sm-10">
+                  <input type="text" name="nombre" value="{{u.1}}" class="form-control" id="nombre" maxlength="50" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="correo" class="col-sm-2 col-form-label">Email</label>
+                <div class="col-sm-10">
+                  <input type="email" name="correo" value="{{u.2}}" class="form-control" id="correo" maxlength="40" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="fechanac" class="col-sm-2 col-form-label">Fecha de Nacimiento</label>
+                <div class="col-sm-10">
+                  <input type="date" name="fechanac" value="{{u.5}}" class="form-control" id="fechanac" required>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="perfil" class="col-sm-2 col-form-label">Perfil</label>
+                <select name="perfil">
+                  <option>-------</option>
+                  <option value="A">Admin</option>
+                  <option value="U">Usuario</option>
+                </select>
+              </div>
+              <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0"></legend>
+                <div class="col-sm-10"></div>
+              </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="eliminar{{u.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="POST" action="/dUsuario/{{u.0}}">
+          <div class="modal-body">
+            ¿Esta seguro de que quiere eliminar al usuario {{u.1}}? Una vez relaizado este proceso, ya no podran recuperarse los datos
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Eliminar</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="agregar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Añadir</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/iUsuario" enctype="multipart/form-data">
+              <div class="row mb-3">
+                <label for="nombre" class="col-sm-2 col-form-label">Usuario</label>
+                <div class="col-sm-10">
+                  <input type="text" name="nombre" class="form-control" id="nombre" maxlength="50" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="correo" class="col-sm-2 col-form-label">Correo</label>
+                <div class="col-sm-10">
+                  <input type="email" name="correo" class="form-control" id="correo" maxlength="40" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="clave" class="col-sm-2 col-form-label">Contraseña</label>
+                <div class="col-sm-10">
+                  <input type="password" name="clave" class="form-control" id="clave" maxlength="15" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="fechanac" class="col-sm-2 col-form-label">Fecha de Nacimiento</label>
+                  <div class="col-sm-10">
+                    <input type="date" name="fechanac" class="form-control" id="fechanac" required>
+                  </div>
+              </div>
+              <div class="row mb-3">
+                <img id="fotou" height="450" width="300">               
+                <input type="file" name="fotou" id="fotou" accept="image/*" onchange="document.getElementById('fotou').src = window.URL.createObjectURL(this.files[0])">
+              </div>
+              <div class="form-group">
+                <label for="perfil" class="col-sm-2 col-form-label">Perfil</label>
+                <select name="perfil">
+                  <option>-------</option>
+                  <option value="A">Admin</option>
+                  <option value="U">Usuario</option>
+                </select>
+              </div>
+              <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0"></legend>
+                <div class="col-sm-10"></div>
+              </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Agregar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="cClave{{u.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Actualizar Contraseña</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/cUsuario/{{u.0}}">
+              <div class="row mb-3">
+                <label for="correo" class="col-sm-2 col-form-label">Correo</label>
+                <div class="col-sm-10">
+                  <input type="email" name="correo" value="{{u.2}}" class="form-control" id="correo" maxlength="40" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="clave" class="col-sm-2 col-form-label">Contraseña</label>
+                <div class="col-sm-10">
+                  <input type="password" name="clave" class="form-control" id="clave" maxlength="15" required>
+                </div>
+              </div>
+              <div class="row mb-3">
+                <label for="clave" class="col-sm-2 col-form-label">Nueva Contraseña</label>
+                <div class="col-sm-10">
+                  <input type="password" name="clavenueva" class="form-control" id="claveclavenueva" maxlength="15" required>
+                </div>
+              </div>
+              <fieldset class="row mb-3">
+                <legend class="col-form-label col-sm-2 pt-0"></legend>
+                <div class="col-sm-10"></div>
+              </fieldset>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="foto{{u.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar Foto</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/aFoto/{{u.0}}" enctype="multipart/form-data">
+              <label>Selecciona la imagen:</label>
+              <div class="d-flex justify-content-center mb-2">
+                <img id="fotou" width="400" height="400">
+              </div>
+              <input type="file" name="fotou" id="fotou" accept="image/*" onchange="document.getElementById('fotou').src = window.URL.createObjectURL(this.files[0])" required>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="vfoto{{u.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="d-flex justify-content-center mb-2">
+            <img src="data:image/jpeg;base64,{{ u.7 }}" height="400"> 
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="d-grid gap-2 col-6 mx-auto">
+  <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#agregar">
+    <img src="{{url_for('static', filename='img/agregar.png')}}" width="20" height="20">
+  </button>
+</div>
+</section>
+
+{% endblock %}

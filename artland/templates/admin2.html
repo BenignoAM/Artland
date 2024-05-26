@@ -1,0 +1,260 @@
+{% extends "layout.html" %}
+{% block titulo %} ArtLand {% endblock %}
+{% block contenido %}
+<nav class="navbar navbar-expand-lg" style="background-color: #c9ece5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/usuarioa">
+      <img src="{{url_for('static', filename='img/pincel.png')}}" width="30" height="30" class="d-inline-block align-text-top">
+      ArtLand 
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-nav">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+          Operaciones
+        </a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/sUsuario">Usuarios</a></li>
+          <li><hr class="dropdown-divider"></li>
+          <li><a class="dropdown-item" href="/sComen">Comentarios</a></li>
+        </ul>
+      </li>
+    </ul> 
+    <ul class="navbar-nav">
+      <div class="btn-group dropstart">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle-right" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+            <img src="data:image/jpeg;base64,{{current_user.fotou}}" width="30" height="30" class="rounded-circle">
+            {{current_user.nombre}}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/perfila/{{current_user.id}}">Mi Perifl</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Cerrar Sesion</a></li>
+          </ul>
+        </li>
+      </div>  
+    </ul>
+  </div>
+</nav>
+<section class="container">
+  {% with mensajes = get_flashed_messages() %}
+    {% if mensajes %}
+      {% for msj in mensajes%}
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            {{ msj }}
+        </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+<table class="table table-bordered table-hover caption-top">
+  <caption>Lista de Publicaciones</caption>
+  <thead>
+    <tr>
+      <th scope="col">Id P</th>
+      <th scope="col">Id U</th>
+      <th scope="col">Comentario</th>
+      <th scope="col">Imagen</th>
+      <th scope="col">Fecha de Publicacion</th>
+      <th scope="col">Operaciones</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      {% for p in publicacion %}
+      <th scope="row">{{ p.0 }}</th>
+      <td>{{ p.1 }}</td>
+      <td>{{ p.2 }}</td>
+      <td>
+        <div class="btn-group dropstart">
+          <button type="button" class="btn btn-outline-dark" class="dropdown-toggle" role="button" data-bs-toggle="dropdown">
+            <img src="{{url_for('static', filename='img/pincel.png')}}" width="20" height="20">
+          </button>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#vimagen{{p.0}}">Ver Imagen</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#editarf{{p.0}}">Editar Imagen</a></li>
+          </ul>
+        </div>
+      </td>
+      <td>{{ p.4 }}</td>
+      <td>
+        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editar{{p.0}}">
+          <img src="{{url_for('static', filename='img/editar.png')}}" width="20" height="20">
+        </button>
+        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminar{{p.0}}">
+          <img src="{{url_for('static', filename='img/borrar.png')}}" width="20" height="20">
+        </button>
+      </td>
+    </tr>
+    <div class="modal fade" id="editar{{p.0}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/uPubli/{{p.0}}">
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-10 col-xl-11">
+                  <div class="card">
+                    <div class="card-body">
+                      <label for="idusuario" class="col-sm-2 col-form-label">Id del Usuario</label>
+                          <div class="input-group mb-3">
+                            <label class="input-group-text" for="idusuario">#</label>
+                            <select name="idusuario" class="form-select" id="idusuario">
+                              <option selected>{{p.1}}</option>
+                              <option>-----------------------------------------------------------------------------------------------</option>
+                              {% for u in usuario %}
+                              <option>{{u.0}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                      <div class="form-outline w-100">
+                        <label class="form-label" for="textAreaExample">Comentario</label>
+                        <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250">{{p.2}}</textarea>
+                      </div>
+                      <br>
+                      <div class="d-flex justify-content-center mb-2">
+                        <img src="data:image/jpeg;base64,{{p.3}}" id="imagenp" width="600" height="600">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal fade" id="editarf{{p.0}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/uPublif/{{p.0}}" enctype="multipart/form-data">
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-10 col-xl-11">
+                  <div class="card">
+                    <div class="card-body">
+                      <label for="idusuario" class="col-sm-2 col-form-label">Id del Usuario</label>
+                      <div class="d-flex flex-start align-items-center">
+                        <input type="text" name="idusuario" value="{{p.1}}" class="form-control" id="idusuario" disabled>
+                      </div>
+                      <br>
+                      <div class="form-outline w-100">
+                        <label class="form-label" for="textAreaExample">Comentario</label>
+                        <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250" disabled>{{p.2}}</textarea>
+                      </div>
+                      <br>
+                      <div class="d-flex justify-content-center mb-2">
+                        <img src="data:image/jpeg;base64,{{p.3}}" id="img" width="600" height="600">
+                      </div>
+                      <input type="file" name="imagenp" id="img" accept="image/*" onchange="document.getElementById('img').src = window.URL.createObjectURL(this.files[0])" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Actualizar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal fade" id="eliminar{{p.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form method="POST" action="/dPubli/{{p.0}}">
+          <div class="modal-body">
+            ¿Esta seguro de que quiere eliminar esta publicacion de este usuario? Una vez realizado este proceso, ya no podran recuperarse los datos
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Eliminar</button>
+          </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <div class="modal fade" id="agregar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Publicar</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <form method="POST" action="/iPubli" enctype="multipart/form-data">
+              <div class="row d-flex justify-content-center">
+                <div class="col-md-12 col-lg-10 col-xl-11">
+                  <div class="card">
+                    <div class="card-body">
+                      <label for="idusuario" class="col-sm-2 col-form-label">Id del Usuario</label>
+                          <div class="input-group mb-3">
+                            <label class="input-group-text" for="idusuario">#</label>
+                            <select name="idusuario" class="form-select" id="idusuario" required>
+                              <option>-----------------------------------------------------------------------------------------------</option>
+                              {% for u in usuario %}
+                              <option>{{u.0}}</option>
+                              {% endfor %}
+                            </select>
+                          </div>
+                      <div class="form-outline w-100">
+                        <label class="form-label" for="textAreaExample">Comentario</label>
+                        <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250" placeholder="Deja un comentario para tu publicacion..."></textarea>
+                      </div>
+                      <br>
+                      <div class="d-flex justify-content-center mb-2">
+                        <img id="imagen" width="600" height="600">
+                      </div>
+                      <input type="file" name="imagenp" id="imagen" accept="image/*" onchange="document.getElementById('imagen').src = window.URL.createObjectURL(this.files[0])" required>
+                    </div>
+                  </div>
+                </div>
+              </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            <button type="submit" class="btn btn-primary">Publicar</button>
+          </div>
+            </form>
+        </div>
+      </div>
+    </div>
+    </div>
+    <div class="modal fade" id="vimagen{{p.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="d-flex justify-content-center mb-2">
+            <img src="data:image/jpeg;base64,{{ p.3 }}" height="600"> 
+          </div>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </tbody>
+</table>
+<div class="d-grid gap-2 col-6 mx-auto">
+  <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#agregar">
+    <img src="{{url_for('static', filename='img/agregar.png')}}" width="20" height="20">
+  </button>
+</div>
+</section>
+{% endblock %}

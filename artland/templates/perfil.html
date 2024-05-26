@@ -1,0 +1,505 @@
+{% extends "layout.html" %}
+{% block titulo %} Perfil {% endblock %}
+{% block contenido %}
+<nav class="navbar navbar-expand-lg" style="background-color: #c9ece5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/usuario">
+      <img src="{{url_for('static', filename='img/pincel.png')}}" width="30" height="30" class="d-inline-block align-text-top">
+      ArtLand 
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-nav">
+      <div class="btn-group dropstart">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle-right" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+            <img src="data:image/jpeg;base64,{{current_user.fotou}}" width="30" height="30" class="rounded-circle">
+            {{current_user.nombre}}
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/usuario">Inicio</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/logout">Cerrar Sesion</a></li>
+          </ul>
+        </li>
+      </div>  
+    </ul>
+  </div>
+</nav>
+{% with mensajes = get_flashed_messages() %}
+  {% if mensajes %}
+    {% for msj in mensajes%}
+      <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        {{ msj }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+  <section>
+    <div class="container py-5">
+      <div class="row">
+        <div class="col-lg-4">
+          <div class="card mb-4">
+            <div class="card-body text-center">
+              <div class="btn-group dropstart">
+                <img src="data:image/jpeg;base64,{{current_user.fotou}}" alt="avatar" class="rounded-circle" style="width: 200px; height: 200px;" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#vfoto">Ver Foto</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item" type="button" data-bs-toggle="modal" data-bs-target="#foto">Editar Foto</a></li>
+                  </ul>
+              </div> 
+              <h5 class="my-3">{{current_user.nombre}}</h5>
+            </div>
+          </div>
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body text-center">
+              <img src="{{url_for('static', filename='img/pincel.png')}}" alt="avatar" style="width: 150px; height: 150px;" class="dropdown-toggle" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              <div style="margin-top: 10px;" class="d-flex justify-content-center">
+                <h6 class="my-3">{{current_user.fechareg}}</h5>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="col-lg-8" style="padding-right: 100px">
+          <div class="card mb-4 mb-lg-0">
+            <div class="card-body">
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Nombre</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{current_user.nombre}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Correo</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{current_user.correo}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Fecha de Nacimiento</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">{{current_user.fechanac}}</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="col-sm-3">
+                  <p class="mb-0">Contraseña</p>
+                </div>
+                <div class="col-sm-9">
+                  <p class="text-muted mb-0">********</p>
+                </div>
+              </div>
+              <hr>
+              <div class="row">
+                <div class="d-flex justify-content-center mb-2">
+                  <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editar">
+                    Editar
+                    <img src="{{url_for('static', filename='img/editar.png')}}" width="20" height="20">
+                  </button>
+                  <button type="button" class="btn btn-outline-dark" data-bs-toggle="modal" data-bs-target="#cClave">
+                    Cambiar Contraseña
+                    <img src="{{url_for('static', filename='img/clave.png')}}" width="20" height="20">
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="row">
+            <div class="col-lg-g">
+              <div class="card mb-4 mb-md-0">
+                <div class="card-body">
+                  <div class="d-grid gap-2 col-6 mx-auto">
+                    <button type="button" class="btn btn-outline-success" data-bs-toggle="modal" data-bs-target="#publicar">
+                      <img src="{{url_for('static', filename='img/foto.png')}}" width="20" height="20">
+                      Publicar
+                    </button>
+                  </div>
+                </div>
+              </div>
+              <br>
+              <div class="row">
+                <div class="col-lg-g">
+                  <div class="card mb-4 mb-md-0">
+                    <div class="card-body">
+                  <div class="row d-flex justify-content-center">
+                    <div class="col-md-12 col-lg-10 col-xl-11">
+                      {% for p in publicacion %}
+                      <div class="card">
+                        <div class="card-body">
+                          <div class="d-flex flex-start align-items-center">
+                            <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{p.6}}" alt="avatar" width="60" height="60" />
+                            <div>
+                              <h6 class="fw-bold text-primary mb-1">{{p.5}}</h6>
+                              <p class="text-muted small mb-0">
+                                {{p.4}}
+                              </p>
+                            </div>
+                            <div style="margin-left: 250px; margin-top: 20px;">
+                              <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#editarp{{p.0}}">
+                                <img src="{{url_for('static', filename='img/editar.png')}}" width="20" height="20">
+                              </button>
+                              <button type="button" class="btn btn-outline-secondary" data-bs-toggle="modal" data-bs-target="#editarpf{{p.0}}">
+                                <img src="{{url_for('static', filename='img/foto.png')}}" width="20" height="20">
+                              </button>
+                              <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminar{{p.0}}">
+                                <img src="{{url_for('static', filename='img/borrar.png')}}" width="20" height="20">
+                              </button> 
+                            </div>
+                          </div>
+              
+                          <p class="mt-3 mb-4 pb-2">
+                            {{p.2}}
+                          </p>
+
+                          <img src="data:image/jpeg;base64,{{p.3}}" height="600" width="600">
+                          
+                        </div>
+                        <p style="margin-left: 20px;" class="text-muted small mb-0">
+                          Comentarios
+                        </p>
+                        {% for c in p[7] %}
+                        <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+                          <div class="d-flex flex-start w-100">
+                            <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{c.6}}" alt="avatar" width="40" height="40" />
+                            <div class="form-outline w-100">
+                              <label class="form-label" for="comentariou">
+                                <h6 class="fw-bold text-primary mb-1">{{c.5}}</h6>
+                              </label>
+                              <p readonly class="form-control-plaintext" id="comentariou" style="background: #fff;">
+                                {{c.3}}
+                                <button style="float: right; margin-right: 40px;" type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#eliminarc{{c.0}}">
+                                  <img src="{{url_for('static', filename='img/borrar.png')}}" width="20" height="20">
+                                </button>
+                                <div class="modal fade" id="eliminarc{{c.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <form method="POST" action="/dComenu/{{c.0}}">
+                                      <div class="modal-body">
+                                        ¿Esta seguro de que quiere eliminar este comentario de esta publicación? Una vez realizado este proceso, ya no podran recuperarse los datos
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                        <button type="submit" class="btn btn-primary">Eliminar</button>
+                                      </div>
+                                      </div>
+                                      </form>
+                                    </div>
+                                  </div>
+                                </div>
+                              </p>
+                            </div>
+                          </div>
+                        </div>
+                        {% endfor %}
+
+                        <form method="POST" action="/comentaru/{{p.0}}">
+                          <div class="card-footer py-3 border-0" style="background-color: #f8f9fa;">
+                            <div class="d-flex flex-start w-100">
+                              <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{current_user.fotou}}" alt="avatar" width="40" height="40" />
+                              <div class="form-outline w-100">
+                                <textarea class="form-control" id="textAreaExample" rows="4" style="background: #fff;" maxlength="250" name="comentariou" placeholder="Deja un comentario en la publicacion..." required></textarea>
+                              </div>
+                            </div>
+                            <div class="float-end mt-2 pt-1">
+                              <button type="submit" class="btn btn-primary btn-sm">Comentar</button>
+                            </div>
+                          </div>
+                        </form>
+                        <br>
+                      </div>
+                      <br>
+
+                      <div class="modal fade" id="editarp{{p.0}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Publicar</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="POST" action="/uPubliu/{{p.0}}">
+                                <div class="row d-flex justify-content-center">
+                                  <div class="col-md-12 col-lg-10 col-xl-11">
+                                    <div class="card">
+                                      <div class="card-body">
+                                        <div class="d-flex flex-start align-items-center">
+                                          <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{current_user.fotou}}" alt="avatar" width="60" height="60" />
+                                          <div>
+                                            <h6 class="fw-bold text-primary mb-1">{{current_user.nombre}}</h6>
+                                            <p class="text-muted small mb-0">
+                                              {{p.4}}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="form-outline w-100">
+                                          <label class="form-label" for="textAreaExample">Comentario</label>
+                                          <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250">{{p.2}}</textarea>
+                                        </div>
+                                        <br>
+                                        <div class="d-flex justify-content-center mb-2">
+                                          <img src="data:image/jpeg;base64,{{p.3}}" id="imagen" width="600" height="600">
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-primary">Actualizar</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="modal fade" id="editarpf{{p.0}}" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Publicar</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="POST" action="/uPublifu/{{p.0}}" enctype="multipart/form-data">
+                                <div class="row d-flex justify-content-center">
+                                  <div class="col-md-12 col-lg-10 col-xl-11">
+                                    <div class="card">
+                                      <div class="card-body">
+                                        <div class="d-flex flex-start align-items-center">
+                                          <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{current_user.fotou}}" alt="avatar" width="60" height="60" />
+                                          <div>
+                                            <h6 class="fw-bold text-primary mb-1">{{current_user.nombre}}</h6>
+                                            <p class="text-muted small mb-0">
+                                              {{p.4}}
+                                            </p>
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="form-outline w-100">
+                                          <label class="form-label" for="textAreaExample">Comentario</label>
+                                          <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250" disabled>{{p.2}}</textarea>
+                                        </div>
+                                        <br>
+                                        <div class="d-flex justify-content-center mb-2">
+                                          <img src="data:image/jpeg;base64,{{p.3}}" id="imagen2" width="600" height="600">
+                                        </div>
+                                        <input value="{{p.3}}" type="file" name="imagenp" id="imagen2" accept="image/*" onchange="document.getElementById('imagen2').src = window.URL.createObjectURL(this.files[0])" required>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-primary">Actualizar</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="modal fade" id="eliminar{{p.0}}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Borrar</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <form method="POST" action="/dPubliu/{{p.0}}">
+                            <div class="modal-body">
+                              ¿Esta seguro de que quiere eliminar esta publicacion? Una vez realizado este proceso, ya no podran recuperarse los datos
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-primary">Eliminar</button>
+                            </div>
+                            </form>
+                          </div>
+                        </div>
+                      </div>
+
+                      {% endfor %}
+                      <div class="modal fade" id="publicar" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Publicar</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="POST" action="/publicaru" enctype="multipart/form-data">
+                                <div class="row d-flex justify-content-center">
+                                  <div class="col-md-12 col-lg-10 col-xl-11">
+                                    <div class="card">
+                                      <div class="card-body">
+                                        <div class="d-flex flex-start align-items-center">
+                                          <img class="rounded-circle shadow-1-strong me-3" src="data:image/jpeg;base64,{{current_user.fotou}}" alt="avatar" width="60" height="60" />
+                                          <div>
+                                            <h6 class="fw-bold text-primary mb-1">{{current_user.nombre}}</h6>
+                                            <input type="text" name="idusuario" value="{{current_user.id}}" class="form-control" id="idusuario" readonly>
+                                          </div>
+                                        </div>
+                                        <br>
+                                        <div class="form-outline w-100">
+                                          <label class="form-label" for="textAreaExample">Comentario</label>
+                                          <textarea class="form-control" id="textAreaExample" name="comentariop" rows="4" style="background: #fff;" maxlength="250" placeholder="Deja un comentario para tu publicacion..."></textarea>
+                                        </div>
+                                        <br>
+                                        <div class="d-flex justify-content-center mb-2">
+                                          <img id="imagenp" width="600" height="600">
+                                        </div>
+                                        <input type="file" name="imagenp" id="imagenp" accept="image/*" onchange="document.getElementById('imagenp').src = window.URL.createObjectURL(this.files[0])" required>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                              <button type="submit" class="btn btn-primary">Publicar</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                      </div>
+                      <div class="modal fade" id="editar" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-lg modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title fs-5" id="exampleModalLabel">Editar</h1>
+                              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                              <form method="POST" action="/upUsuario/{{current_user.id}}">
+                                <div class="row mb-3">
+                                  <label for="nombre" class="col-sm-2 col-form-label">Usuario</label>
+                                  <div class="col-sm-10">
+                                    <input type="text" name="nombre" value="{{current_user.nombre}}" class="form-control" id="nombre" maxlength="50" required>
+                                  </div>
+                                </div>
+                                <div class="row mb-3">
+                                  <label for="correo" class="col-sm-2 col-form-label">Email</label>
+                                  <div class="col-sm-10">
+                                    <input type="email" name="correo" value="{{current_user.correo}}" class="form-control" id="correo" maxlength="40" required>
+                                  </div>
+                                </div>
+                                <div class="row mb-3">
+                                  <label for="fechanac" class="col-sm-2 col-form-label">Fecha de Nacimiento</label>
+                                  <div class="col-sm-10">
+                                    <input type="date" name="fechanac" value="{{current_user.fechanac}}" class="form-control" id="fechanac" required>
+                                  </div>
+                                </div>
+                                <fieldset class="row mb-3">
+                                  <legend class="col-form-label col-sm-2 pt-0"></legend>
+                                  <div class="col-sm-10"></div>
+                                </fieldset>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                              </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="modal fade" id="cClave" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                            <div class="modal-dialog modal-lg modal-dialog-centered">
+                              <div class="modal-content">
+                                <div class="modal-header">
+                                  <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar Contraseña</h1>
+                                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                  <form method="POST" action="/cpUsuario/{{current_user.id}}">
+                                    <div class="row mb-3">
+                                      <label for="correo" class="col-sm-2 col-form-label">Correo</label>
+                                      <div class="col-sm-10">
+                                        <input type="email" name="correo" value="{{current_user.correo}}" class="form-control" id="correo" maxlength="40" required>
+                                      </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                      <label for="clave" class="col-sm-2 col-form-label">Contraseña</label>
+                                      <div class="col-sm-10">
+                                        <input type="password" name="clave" class="form-control" id="clave" maxlength="15" required>
+                                      </div>
+                                    </div>
+                                    <div class="row mb-3">
+                                      <label for="clave" class="col-sm-2 col-form-label">Nueva Contraseña</label>
+                                      <div class="col-sm-10">
+                                        <input type="password" name="clavenueva" class="form-control" id="claveclavenueva" maxlength="15" required>
+                                      </div>
+                                    </div>
+                                    <fieldset class="row mb-3">
+                                      <legend class="col-form-label col-sm-2 pt-0"></legend>
+                                      <div class="col-sm-10"></div>
+                                    </fieldset>
+                                </div>
+                                <div class="modal-footer">
+                                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                  <button type="submit" class="btn btn-primary">Actualizar</button>
+                                </div>
+                                  </form>
+                              </div>
+                            </div>
+                      </div>
+                      <div class="modal fade" id="foto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                          <div class="modal-dialog modal-dialog-centered">
+                            <div class="modal-content">
+                              <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Cambiar Foto</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                              </div>
+                              <div class="modal-body">
+                                <form method="POST" action="/uFoto/{{current_user.id}}" enctype="multipart/form-data">
+                                  <label>Selecciona la imagen:</label>
+                                  <div class="d-flex justify-content-center mb-2">
+                                    <img src="data:image/jpeg;base64,{{current_user.fotou}}" id="fotou" width="400" height="400">
+                                  </div>
+                                  <input type="file" name="fotou" id="fotou" accept="image/*" onchange="document.getElementById('fotou').src = window.URL.createObjectURL(this.files[0])" required>
+                              </div>
+                              <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                                <button type="submit" class="btn btn-primary">Actualizar</button>
+                              </div>
+                                </form>
+                            </div>
+                          </div>
+                      </div>
+                      <div class="modal fade" id="vfoto" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered">
+                          <div class="modal-content">
+                            <div class="d-flex justify-content-center mb-2">
+                              <img src="data:image/jpeg;base64,{{current_user.fotou}}" height="400">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

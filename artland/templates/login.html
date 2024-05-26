@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+{% block titulo %} login {% endblock %}
+{% block contenido %}
+<nav class="navbar navbar-expand-lg" style="background-color: #c9ece5">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">
+      <img src="{{url_for('static', filename='img/pincel.png')}}" width="30" height="30" class="d-inline-block align-text-top">
+      ArtLand 
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <ul class="navbar-nav">
+      <div class="btn-group dropstart">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle-right" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" style="padding-right: 40px">
+            <img src="{{url_for('static', filename='img/usuario.png')}}" width="30" height="30" class="rounded-circle img-fluid">
+            Usuario
+          </a>
+          <ul class="dropdown-menu">
+            <li><a class="dropdown-item" href="/">Inicio</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="/registro">Registrarse</a></li>
+          </ul>
+        </li>
+      </div>  
+    </ul>
+  </div>
+</nav>
+<section class="container d-flex justify-content-center mb-2">
+<form method="POST" action="/login" style="padding-top: 100px">
+  <h1>¡Hola otra vez!</h1>
+  <br>
+  <br>
+
+  {% with mensajes = get_flashed_messages() %}
+    {% if mensajes %}
+      {% for msj in mensajes%}
+          <div class="alert alert-danger" role="alert">
+            {{ msj }}
+          </div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+  
+  <div class="row mb-3">
+    <label for="correo" class="col-sm-2 col-form-label">Correo</label>
+    <div style="padding-left: 50px;" class="col-sm-10">
+      <input type="email" name="correo" class="form-control" id="correo">
+    </div>
+  </div>
+  <div class="row mb-3">
+    <label for="clave" class="col-sm-2 col-form-label">Contraseña</label>
+    <div style="padding-left: 50px;" class="col-sm-10">
+      <input type="password" name="clave" class="form-control" id="clave">
+    </div>
+  </div>
+  <fieldset class="row mb-3">
+    <legend class="col-form-label col-sm-2 pt-0"></legend>
+    <div class="col-sm-10"></div>
+  </fieldset>
+  <button type="submit" class="btn btn-primary">Iniciar Sesión</button>
+</form>
+</section>
+{% endblock %}
